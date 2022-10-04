@@ -13,15 +13,15 @@ import Seo from "../components/seo"
 axios.defaults.withCredentials = true
 
 const Registration = () => {
-  const data = useStaticQuery(graphql`
-    query {
-      site {
-        siteMetadata {
-          flaskAppIp
-        }
-      }
-    }
-  `)
+  // const data = useStaticQuery(graphql`
+  //   query {
+  //     site {
+  //       siteMetadata {
+  //         flaskAppIp
+  //       }
+  //     }
+  //   }
+  // `)
 
   const [members, setMembers] = useState()
   const [reload, setReload] = useState(false)
