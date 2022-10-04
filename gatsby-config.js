@@ -18,7 +18,7 @@ module.exports = {
     siteUrl: `https://vitworks.net/`,
     local: `ja_JP`,
     fbappid: `2139031849601255`,
-    flaskAppIp: process.env.FLASK_APP_IP.replace(/\"/g, ""),
+    // flaskAppIp: process.env.FLASK_APP_IP.replace(/\"/g, ""),
   },
   plugins: [`axios`],
 }

@@ -32,7 +32,8 @@ const Registration = () => {
   const [mode, setMode] = useState("create")
 
   // 環境変数から接続先のWebAppを取得
-  const baseUrl = data.site.siteMetadata.flaskAppIp
+  // const baseUrl = data.site.siteMetadata.flaskAppIp
+  const baseUrl = "https://vitworks.xsrv.jp/dev/flask/index.cgi"
   const load_members_url = baseUrl + "/load_members"
   const delete_member_url = baseUrl + "/delete_member"
   const create_member_url = baseUrl + "/create_member"
