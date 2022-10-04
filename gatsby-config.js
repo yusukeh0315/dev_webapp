@@ -20,5 +20,5 @@ module.exports = {
     fbappid: `2139031849601255`,
     flaskAppIp: process.env.FLASK_APP_IP.replace(/\"/g, ""),
   },
-  plugins: [],
+  plugins: [`axios`],
 }
