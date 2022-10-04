@@ -5,6 +5,7 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import TextField from "@mui/material/TextField"
 import axios from "axios"
+import { graphql, useStaticQuery } from "gatsby"
 import React, { useEffect, useState } from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -12,6 +13,16 @@ import Seo from "../components/seo"
 axios.defaults.withCredentials = true
 
 const Registration = () => {
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          flaskAppIp
+        }
+      }
+    }
+  `)
+
   const [members, setMembers] = useState()
   const [reload, setReload] = useState(false)
   const [id, setId] = useState()
@@ -20,21 +31,21 @@ const Registration = () => {
   const [comment, setComment] = useState()
   const [mode, setMode] = useState("create")
 
-  const baseUrl = "http://127.0.0.1:5000"
+  // 環境変数から接続先のWebAppを取得
+  const baseUrl = data.site.siteMetadata.flaskAppIp
   const load_members_url = baseUrl + "/load_members"
   const delete_member_url = baseUrl + "/delete_member"
   const create_member_url = baseUrl + "/create_member"
   const update_member_url = baseUrl + "/update_member"
 
+  // 初回読み込み時とreloadが変更となった場合にメンバー一覧を取得
   useEffect(() => {
-    console.log(load_members_url)
     function fetchData() {
       axios
         .get(load_members_url)
         .then(function (response) {
           if (response.status === 200) {
             setMembers(response.data.result)
-            console.log(members)
           } else {
             console.log(response)
           }
@@ -46,27 +57,40 @@ const Registration = () => {
     fetchData()
   }, [reload])
 
+  // 新規作成と更新処理
   const handleSubmit = event => {
     event.preventDefault()
 
+    // formのボタンの内容を取得
     const submitType = event.currentTarget.querySelector(
       "form > div > button"
     ).innerHTML
 
     let postUrl = ""
-    let params = ""
+    let value = ""
 
     if (submitType === "作成") {
       postUrl = create_member_url
-      params = new URLSearchParams(new FormData(event.currentTarget))
+      value = {
+        name: name,
+        age: age,
+        comment: comment,
+      }
     } else if (submitType === "更新") {
       postUrl = update_member_url
-      params = new URLSearchParams(new FormData(event.currentTarget))
-      params.append("id", id)
+      value = {
+        id: id,
+        name: name,
+        age: age,
+        comment: comment,
+      }
     }
 
     axios
-      .post(postUrl, params)
+      .post(postUrl, {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value),
+      })
       .then(function (response) {
         if (response.status === 200) {
           console.log(response)
@@ -81,19 +105,21 @@ const Registration = () => {
       })
   }
 
+  // 削除処理
   const deleteMember = delete_id => {
-    let params = new URLSearchParams()
-    params.append("id", delete_id)
-
-    let postUrl = delete_member_url
+    const value = {
+      id: delete_id,
+    }
 
     axios
-      .post(postUrl, params)
+      .post(delete_member_url, {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value),
+      })
       .then(function (response) {
         if (response.status === 200) {
           console.log(response)
           setReload(!reload)
-          reset()
         } else {
           console.log(response)
         }
@@ -102,7 +128,6 @@ const Registration = () => {
         console.log(error)
       })
   }
-
   const setUpdate = member => {
     // 更新対象のメンバの情報をフォームにセットする
     setId(member.id)
@@ -112,8 +137,8 @@ const Registration = () => {
     setComment(member.comment)
   }
 
+  // フォームのリセット
   const reset = () => {
-    // フォームのリセット
     setMode("create")
     setId("")
     setName("")
