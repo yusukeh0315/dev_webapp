@@ -47,6 +47,7 @@ const Registration = () => {
         .then(function (response) {
           if (response.status === 200) {
             setMembers(response.data.result)
+            console.log(response)
           } else {
             console.log(response)
           }
